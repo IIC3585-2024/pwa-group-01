@@ -51,10 +51,52 @@ self.addEventListener('fetch', (fetchEvent) => {
   fetchEvent.respondWith(
     caches.match(fetchEvent.request)
       .then((res) => {
-        return res || fetch(fetchEvent.request);
+        // Attempt to fetch a fresh copy from the network
+        const fetchPromise = fetch(fetchEvent.request)
+          .then((response) => {
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            // Clone the response to use it and store it in the cache
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                cache.put(fetchEvent.request, responseToCache);
+              });
+
+            return response;
+          })
+          .catch((err) => {
+            console.error('Error fetching and caching new assets:', err);
+          });
+
+        // Return the cached response or the network response if available
+        return res || fetchPromise;
       })
       .catch((err) => {
-        console.error('Error fetching assets', err);
+        console.error('Error fetching assets from cache:', err);
       })
   );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
+
+// Force page update when Service Worker is activated
+self.addEventListener('message', (event) => {
+  if (event.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
 });
