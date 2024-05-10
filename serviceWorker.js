@@ -68,6 +68,7 @@ self.addEventListener('install', (event) => {
         cache.addAll(filesToCache)
           .then(() => {
             console.log('Assets cached');
+            return self.skipWaiting()
           })
           .catch((err) => {
             console.error('Error adding assets to cache', err);

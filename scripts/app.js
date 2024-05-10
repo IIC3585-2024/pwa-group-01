@@ -1,37 +1,16 @@
 import DB from "./db.js";
 import View from "./view.js";
 import Firebase from "./firebase.js"
-import firebase from "./firebase/firebase-app"
+import "./firebase/firebase-app.js"
 import "./firebase/firebase-database.js"
 import "./firebase/firebase-messaging.js"
-
-Notification.requestPermission()
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("serviceWorker.js")
+      .register("firebase-messaging-sw.js")
       .then((res) => {
         console.log("Service Worker: Registered");
-        const messaging = firebase.messaging(app);
-        messaging.useServiceWorker(res);
-        messaging.getToken({ vapidKey: 'BKSY5FG57DftNgn4bU3Xu4RTjv3t23HXJDGLXJ5Kc5Mg1PSnC4zfri2JGHppM_59SLIzlsbn8MDpXzAKO6z6dRk' }).then((currentToken) => {
-          if (currentToken) {
-            console.log(currentToken)
-          } else {
-            console.log('No registration token available. Request permission to generate one.');
-            // ...
-          }
-        }).catch((err) => {
-          console.log('An error occurred while retrieving token. ', err);
-          // ...
-        });
-        messaging.onMessage(messaging, (payload) => {
-          console.log('Message received. ', payload);
-          // Update the UI to include the received message.
-          appendMessage(payload);
-        });
-
       })
       .catch((err) => {
         console.error("Service Worker: Error registering", err);
@@ -40,7 +19,6 @@ if ("serviceWorker" in navigator) {
 }
 
 addEventListener("DOMContentLoaded", () => {
-//drSm5R9F8tLva8mQ_hbWc4:APA91bEtPFNJRFWT1cIpXy0kbvS8qLcF2bYMeOR1VGYE2bRflruqQwEI4PDtZlzIfefOPfhrxzQQ78g8dQj6BvjGEo0VNivu6b9MX1U2DnczMIoDz1YF7JEp0DXo7T7xGs5nCFUr5qwh
   const dbName = "mydb";
   const tableName = "notes";
   const firebase = new Firebase();
@@ -52,3 +30,45 @@ addEventListener("DOMContentLoaded", () => {
 
   view.render();
 });
+
+function setupFirebase(){
+
+  let app = firebase.initializeApp({
+    apiKey: "AIzaSyCRfhLBHpwzz0iWZbYHakvesAu7FK3x2_w",
+    authDomain: "pwa-grupo1.firebaseapp.com",
+    databaseURL: "https://pwa-grupo1-default-rtdb.firebaseio.com",
+    projectId: "pwa-grupo1",
+    storageBucket: "pwa-grupo1.appspot.com",
+    messagingSenderId: "179629559064",
+    appId: "1:179629559064:web:63ac484d65bc974737e26d"
+  });
+  const messaging = firebase.messaging(app);
+  messaging.getToken({ vapidKey: 'BKSY5FG57DftNgn4bU3Xu4RTjv3t23HXJDGLXJ5Kc5Mg1PSnC4zfri2JGHppM_59SLIzlsbn8MDpXzAKO6z6dRk' }).then((currentToken) => {
+    if (currentToken) {
+      console.log(currentToken)
+    } else {
+      console.log('No registration token available. Request permission to generate one.');
+      // ...
+    }
+  }).catch((err) => {
+    console.log('An error occurred while retrieving token. ', err);
+    // ...
+  });
+}
+
+setTimeout(setupFirebase, 10000);
+
+navigator.serviceWorker.onmessage = (event) => {
+  console.log(event.data)
+  try{
+    if(event.data.messageType === 'push-received'){
+      let notificationData = {title: event.data.notification.title, body: event.data.notification.body}
+      console.log(notificationData)
+      console.log(Notification.permission)
+      const notification = new Notification(notificationData.title, notificationData);
+    }
+  }
+  catch (err){
+    console.error('Service Worker message reception failed: ', err)
+  }
+};
