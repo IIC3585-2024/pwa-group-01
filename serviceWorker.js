@@ -1,8 +1,10 @@
+import firebase from './scripts/firebase/firebase-app'
+
 importScripts("./scripts/firebase/firebase-app.js")
 importScripts("./scripts/firebase/firebase-database.js")
 importScripts("./scripts/firebase/firebase-messaging.js")
 
-var firebaseConfig = {
+firebase.initializeApp({
   apiKey: "AIzaSyCRfhLBHpwzz0iWZbYHakvesAu7FK3x2_w",
   authDomain: "pwa-grupo1.firebaseapp.com",
   databaseURL: "https://pwa-grupo1-default-rtdb.firebaseio.com",
@@ -10,7 +12,9 @@ var firebaseConfig = {
   storageBucket: "pwa-grupo1.appspot.com",
   messagingSenderId: "179629559064",
   appId: "1:179629559064:web:63ac484d65bc974737e26d"
-};
+});
+
+
 
 const messaging = firebase.messaging();
 
