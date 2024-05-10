@@ -11,6 +11,7 @@ if ("serviceWorker" in navigator) {
       .register("firebase-messaging-sw.js")
       .then((res) => {
         console.log("Service Worker: Registered");
+
       })
       .catch((err) => {
         console.error("Service Worker: Error registering", err);
@@ -31,7 +32,7 @@ addEventListener("DOMContentLoaded", () => {
   view.render();
 });
 
-function setupFirebase(){
+async function setupFirebase(){
 
   let app = firebase.initializeApp({
     apiKey: "AIzaSyCRfhLBHpwzz0iWZbYHakvesAu7FK3x2_w",
@@ -43,6 +44,8 @@ function setupFirebase(){
     appId: "1:179629559064:web:63ac484d65bc974737e26d"
   });
   const messaging = firebase.messaging(app);
+  const registration = await navigator.serviceWorker.getRegistration();
+  messaging.useServiceWorker(registration);
   messaging.getToken({ vapidKey: 'BKSY5FG57DftNgn4bU3Xu4RTjv3t23HXJDGLXJ5Kc5Mg1PSnC4zfri2JGHppM_59SLIzlsbn8MDpXzAKO6z6dRk' }).then((currentToken) => {
     if (currentToken) {
       console.log(currentToken)
