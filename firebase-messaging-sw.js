@@ -32,6 +32,12 @@ const assets = [
   "",
   "index.html",
   "manifest.json",
+  "scripts/components/addNote.js",
+  "scripts/app.js",
+  "scripts/db.js",
+  "scripts/firebase.js",
+  "scripts/view.js",
+  "styles/style.css"
 ];
 
 // Get all files within a folder and add them to the assest to cache
