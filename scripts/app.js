@@ -1,9 +1,9 @@
 import DB from "./db.js";
 import View from "./view.js";
 import Firebase from "./firebase.js"
-import "/scripts/firebase/firebase-app.js"
-import "/scripts/firebase/firebase-database.js"
-import "/scripts/firebase/firebase-messaging.js"
+import "./firebase/firebase-app.js"
+import "./firebase/firebase-database.js"
+import "./firebase/firebase-messaging.js"
 
 Notification.requestPermission()
 
