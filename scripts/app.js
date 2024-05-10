@@ -24,6 +24,7 @@ if ("serviceWorker" in navigator) {
         });
 
         const messaging = firebase.messaging(app);
+        messaging.useServiceWorker("/pwa-group-01/serviceWorker.js");
         messaging.getToken({ vapidKey: 'BKSY5FG57DftNgn4bU3Xu4RTjv3t23HXJDGLXJ5Kc5Mg1PSnC4zfri2JGHppM_59SLIzlsbn8MDpXzAKO6z6dRk' }).then((currentToken) => {
           if (currentToken) {
             console.log(currentToken)
