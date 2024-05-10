@@ -1,7 +1,7 @@
 import DB from "./db.js";
 import View from "./view.js";
 import Firebase from "./firebase.js"
-import "./firebase/firebase-app.js"
+import firebase from "./firebase/firebase-app"
 import "./firebase/firebase-database.js"
 import "./firebase/firebase-messaging.js"
 
@@ -13,16 +13,6 @@ if ("serviceWorker" in navigator) {
       .register("serviceWorker.js")
       .then((res) => {
         console.log("Service Worker: Registered");
-        const app = firebase.initializeApp({
-          apiKey: "AIzaSyCRfhLBHpwzz0iWZbYHakvesAu7FK3x2_w",
-          authDomain: "pwa-grupo1.firebaseapp.com",
-          databaseURL: "https://pwa-grupo1-default-rtdb.firebaseio.com",
-          projectId: "pwa-grupo1",
-          storageBucket: "pwa-grupo1.appspot.com",
-          messagingSenderId: "179629559064",
-          appId: "1:179629559064:web:63ac484d65bc974737e26d"
-        });
-
         const messaging = firebase.messaging(app);
         messaging.useServiceWorker(res);
         messaging.getToken({ vapidKey: 'BKSY5FG57DftNgn4bU3Xu4RTjv3t23HXJDGLXJ5Kc5Mg1PSnC4zfri2JGHppM_59SLIzlsbn8MDpXzAKO6z6dRk' }).then((currentToken) => {
