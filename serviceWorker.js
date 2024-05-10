@@ -1,8 +1,31 @@
-//importScripts("/scripts/firebase/firebase-app.js")
-//importScripts("/scripts/firebase/firebase-database.js")
-//importScripts("/scripts/firebase/firebase-messaging.js")
+importScripts("./scripts/firebase/firebase-app.js")
+importScripts("./scripts/firebase/firebase-database.js")
+importScripts("./scripts/firebase/firebase-messaging.js")
 
+var firebaseConfig = {
+  apiKey: "AIzaSyCRfhLBHpwzz0iWZbYHakvesAu7FK3x2_w",
+  authDomain: "pwa-grupo1.firebaseapp.com",
+  databaseURL: "https://pwa-grupo1-default-rtdb.firebaseio.com",
+  projectId: "pwa-grupo1",
+  storageBucket: "pwa-grupo1.appspot.com",
+  messagingSenderId: "179629559064",
+  appId: "1:179629559064:web:63ac484d65bc974737e26d"
+};
 
+const messaging = firebase.messaging();
+
+messaging.setBackgroundMessageHandler(function(payload) {
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  // Customize notification here
+  var notificationTitle = 'Background Message Title';
+  var notificationOptions = {
+    body: 'Background Message body.',
+    icon: '/firebase-logo.png'
+  };
+
+  return self.registration.showNotification(notificationTitle,
+    notificationOptions);
+});
 
 const CACHE_NAME = 'v1';
 
