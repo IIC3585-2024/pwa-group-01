@@ -1,6 +1,6 @@
-importScripts("/scripts/firebase/firebase-app.js")
-importScripts("/scripts/firebase/firebase-database.js")
-importScripts("/scripts/firebase/firebase-messaging.js")
+//importScripts("/scripts/firebase/firebase-app.js")
+//importScripts("/scripts/firebase/firebase-database.js")
+//importScripts("/scripts/firebase/firebase-messaging.js")
 
 
 
