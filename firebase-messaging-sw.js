@@ -17,9 +17,9 @@ const messaging = firebase.messaging();
 const CACHE_NAME = 'v1';
 
 const assets = [
-  "/",
-  "/index.html",
-  "/manifest.json",
+  "",
+  "index.html",
+  "manifest.json",
 ];
 
 // Get all files within a folder and add them to the assest to cache
@@ -46,8 +46,8 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then(async (cache) => {
         const filesToCache = [...assets];
-        filesToCache.push(...await listFilesRecursively('/scripts/'));
-        filesToCache.push(...await listFilesRecursively('/styles/'));
+        filesToCache.push(...await listFilesRecursively('scripts/'));
+        filesToCache.push(...await listFilesRecursively('styles/'));
         cache.addAll(filesToCache)
           .then(() => {
             console.log('Assets cached');
