@@ -16,6 +16,7 @@ class Firebase {
     this.DB = null;
     this.messaging = null;
     this.onMessage = null;
+    this.token = null;
     
     // Initialize Firebase asynchronously
     this._initializeFirebase()
@@ -109,6 +110,7 @@ class Firebase {
     try{
       this.firebaseRef = this.firebaseDatabase.ref(this.database, 'notes/'+note.id);
       await this.firebaseDatabase.set(this.firebaseRef, note);
+      this.sendNotificacion([this.token],'hola','que tal')
       return true;
     } catch (error) {
       console.error("Error adding element to firebase: ", error);
@@ -143,6 +145,61 @@ class Firebase {
       console.error("Error getting notes from Firebase:", error);
       return [];
     }
+  }
+
+  async addToken(token){
+    this.token = token
+    try{
+      this.firebaseRef = this.firebaseDatabase.ref(this.database, 'tokens/'+token);
+      await this.firebaseDatabase.set(this.firebaseRef, token);
+      return true;
+    } catch (error) {
+      console.error("Error adding token to firebase: ", error);
+      return false;
+    }
+  }
+
+  sendNotificacion(tokens, tittle, body) {
+    // Datos del mensaje a enviar
+    const message = {
+      notification: {
+        title: tittle,
+        body: body
+      },
+      registration_ids: tokens
+    };
+  
+    // URL del servidor de Firebase Cloud Messaging
+    const fcmUrl = 'https://fcm.googleapis.com/fcm/send';
+  
+    // Clave de servidor de Firebase (reemplázala con tu clave)
+    const serverKey = 'BKSY5FG57DftNgn4bU3Xu4RTjv3t23HXJDGLXJ5Kc5Mg1PSnC4zfri2JGHppM_59SLIzlsbn8MDpXzAKO6z6dRk';
+  
+    // Encabezados de la solicitud HTTP
+    const headers = {
+      'Authorization': 'key=' + serverKey,
+      'Content-Type': 'application/json'
+    };
+  
+    // Realizar la solicitud HTTP POST a Firebase Cloud Messaging
+    return fetch(fcmUrl, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(message)
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log('Notificación enviada exitosamente');
+      } else {
+        console.error('Error al enviar la notificación');
+        console.log(response)
+      }
+      return response.json();
+    })
+    .catch(error => {
+      console.error('Error en la solicitud:', error);
+      return Promise.reject(error);
+    });
   }
 
 }

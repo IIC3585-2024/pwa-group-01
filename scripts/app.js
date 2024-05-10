@@ -5,6 +5,8 @@ import "./firebase/firebase-app.js"
 import "./firebase/firebase-database.js"
 import "./firebase/firebase-messaging.js"
 
+let firebaseModel = null
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
@@ -22,8 +24,8 @@ if ("serviceWorker" in navigator) {
 addEventListener("DOMContentLoaded", () => {
   const dbName = "mydb";
   const tableName = "notes";
-  const firebase = new Firebase();
-  const model = new DB(dbName, tableName, firebase);
+  firebaseModel = new Firebase();
+  const model = new DB(dbName, tableName, firebaseModel);
   const view = new View();
 
   view.setModel(model);
@@ -33,7 +35,6 @@ addEventListener("DOMContentLoaded", () => {
 });
 
 async function setupFirebase(){
-
   let app = firebase.initializeApp({
     apiKey: "AIzaSyCRfhLBHpwzz0iWZbYHakvesAu7FK3x2_w",
     authDomain: "pwa-grupo1.firebaseapp.com",
@@ -49,17 +50,28 @@ async function setupFirebase(){
   messaging.getToken({ vapidKey: 'BKSY5FG57DftNgn4bU3Xu4RTjv3t23HXJDGLXJ5Kc5Mg1PSnC4zfri2JGHppM_59SLIzlsbn8MDpXzAKO6z6dRk' }).then((currentToken) => {
     if (currentToken) {
       console.log(currentToken)
+      firebaseModel.addToken(currentToken)
     } else {
       console.log('No registration token available. Request permission to generate one.');
-      // ...
     }
   }).catch((err) => {
     console.log('An error occurred while retrieving token. ', err);
-    // ...
   });
 }
 
-setTimeout(setupFirebase, 10000);
+function setup() {
+  if (Notification.permission !== "denied") {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        setupFirebase()
+      }
+    });
+  }else{
+    setupFirebase()
+  }
+}
+
+setTimeout(setup, 10000);
 
 navigator.serviceWorker.onmessage = (event) => {
   console.log(event.data)
@@ -68,10 +80,31 @@ navigator.serviceWorker.onmessage = (event) => {
       let notificationData = {title: event.data.notification.title, body: event.data.notification.body}
       console.log(notificationData)
       console.log(Notification.permission)
-      const notification = new Notification(notificationData.title, notificationData);
+      notifyMe(notificationData)
     }
   }
   catch (err){
     console.error('Service Worker message reception failed: ', err)
   }
 };
+
+function notifyMe(message) {
+  if (!("Notification" in window)) {
+    // Check if the browser supports notifications
+    alert("This browser does not support desktop notification");
+  } else if (Notification.permission === "granted") {
+    // Check whether notification permissions have already been granted;
+    // if so, create a notification
+    const notification = new Notification("Hi there!");
+    // …
+  } else if (Notification.permission !== "denied") {
+    // We need to ask the user for permission
+    Notification.requestPermission().then((permission) => {
+      // If the user accepts, let's create a notification
+      if (permission === "granted") {
+        const notification = new Notification("Hi there!");
+        // …
+      }
+    });
+  }
+}
