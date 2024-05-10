@@ -9,31 +9,27 @@ class Firebase {
       messagingSenderId: "179629559064",
       appId: "1:179629559064:web:63ac484d65bc974737e26d"
     };
-    
-    // Initialize Firebase
-    //this.app = initializeApp(this.firebaseConfig);
-    
-    // Get a reference to the database service
-    //this.database = getDatabase(this.app);
-    
-    // Reference to the location where you want to add the elements
-    //this.firebaseRef = ref(this.database, 'notes');
 
     this.database = null;
     this.firebaseRef = null;
-    this.firebaseDatabase = null
-    this.DB = null
+    this.firebaseDatabase = null;
+    this.DB = null;
+    this.messaging = null;
+    this.onMessage = null;
     
     // Initialize Firebase asynchronously
     this._initializeFirebase()
-      .then(() => {this.setupConnectionListener()});
+      .then(() => {
+        this.setupConnectionListener();
+        this.setupMessaging();
+      });
   }
 
   setDB(DB){
     this.DB = DB
   }
 
-  // Chaecks connection with firebase
+  // Checks connection with firebase
   setupConnectionListener() {
     const connectedRef = this.firebaseDatabase.ref(this.database, ".info/connected");
     this.firebaseDatabase.onValue(connectedRef, (snapshot) => {
@@ -45,6 +41,13 @@ class Firebase {
       } else {
         console.log("Firebase: Disconnected");
       }
+    });
+  }
+
+
+  setupMessaging() {
+    this.onMessage((payload) => {
+      console.log('Message from firebase:', payload);
     });
   }
 
@@ -60,10 +63,19 @@ class Firebase {
       this.database = this.firebaseDatabase.getDatabase();
       // Reference to the location where you want to add the elements
       this.firebaseRef = this.firebaseDatabase.ref(this.database, 'notes');
+      // Load Firebase Messaging asynchronously
+      this.firebaseMessaging = await this._loadFirebaseMessaging();
+      // Get a reference to the messaging service
+      this.messaging = this.firebaseMessaging.getMessaging(this.app)
+      // Get a reference to onMessage
+      this.onMessage = this.firebaseMessaging.onMessage
+
     } catch (error) {
       console.error("Error initializing Firebase:", error);
     }
   }
+
+  //gxrOP1_nYuTxeNahxe4xvdNzKEhwMFHMsw4K2t1VaE4
 
   async _loadFirebaseApp() {
     try {
@@ -79,6 +91,15 @@ class Firebase {
       return await import("https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js");
     } catch (error) {
       console.error("Error loading Firebase Database:", error);
+      throw error;
+    }
+  }
+
+  async _loadFirebaseMessaging() {
+    try {
+      return await import("https://www.gstatic.com/firebasejs/10.11.1/firebase-messaging.js");
+    } catch (error) {
+      console.error("Error loading Firebase Messaging:", error);
       throw error;
     }
   }

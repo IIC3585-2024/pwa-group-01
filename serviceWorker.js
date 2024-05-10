@@ -1,3 +1,9 @@
+importScripts("/scripts/firebase/firebase-app.js")
+importScripts("/scripts/firebase/firebase-database.js")
+importScripts("/scripts/firebase/firebase-messaging.js")
+
+
+
 const CACHE_NAME = 'v1';
 
 const assets = [
@@ -94,8 +100,9 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Force page update when Service Worker is activated
+
 self.addEventListener('message', (event) => {
+  // Force page update when Service Worker is activated
   if (event.data.action === 'skipWaiting') {
     self.skipWaiting();
   }
