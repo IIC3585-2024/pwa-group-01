@@ -1,5 +1,6 @@
 import DB from "./db.js";
 import View from "./view.js";
+import Firebase from "./firebase.js"
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
@@ -17,7 +18,8 @@ if ("serviceWorker" in navigator) {
 addEventListener("DOMContentLoaded", () => {
   const dbName = "mydb";
   const tableName = "notes";
-  const model = new DB(dbName, tableName);
+  const firebase = new Firebase();
+  const model = new DB(dbName, tableName, firebase);
   const view = new View();
 
   view.setModel(model);
