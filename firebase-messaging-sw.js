@@ -17,9 +17,8 @@ const messaging = firebase.messaging();
 const CACHE_NAME = 'v1';
 
 const assets = [
-  "./",
-  "./index.html",
-  "./manifest.json",
+  "pwa-group-01/index.html",
+  "pwa-group-01/manifest.json",
 ];
 
 // Get all files within a folder and add them to the assest to cache
@@ -46,8 +45,8 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then(async (cache) => {
         const filesToCache = [...assets];
-        filesToCache.push(...await listFilesRecursively('./scripts/'));
-        filesToCache.push(...await listFilesRecursively('./styles/'));
+        filesToCache.push(...await listFilesRecursively('pwa-group-01/scripts/'));
+        filesToCache.push(...await listFilesRecursively('pwa-group-01/styles/'));
         cache.addAll(filesToCache)
           .then(() => {
             console.log('Assets cached');
