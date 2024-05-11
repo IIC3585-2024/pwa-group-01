@@ -72,8 +72,8 @@ class DB {
     }
 
     console.log("Nota a guardar: ", note);
-    const transaction = this.db.transaction([tableName], "readwrite");
-    const objectStore = transaction.objectStore(tableName);
+    const transaction = this.db.transaction([this.tableName], "readwrite");
+    const objectStore = transaction.objectStore(this.tableName);
     const request = objectStore.add(note);
 
     request.onsuccess = (event) => {
@@ -106,8 +106,8 @@ class DB {
   }
 
   deleteAllNotes(callback) {
-    const transaction = this.db.transaction([tableName], "readwrite");
-    const objectStore = transaction.objectStore(tableName);
+    const transaction = this.db.transaction([this.tableName], "readwrite");
+    const objectStore = transaction.objectStore(this.tableName);
     const request = objectStore.clear();
 
     request.onsuccess = function (event) {
@@ -136,8 +136,8 @@ class DB {
         });
     }
 
-    const transaction = this.db.transaction([tableName], "readwrite");
-    const objectStore = transaction.objectStore(tableName);
+    const transaction = this.db.transaction([this.tableName], "readwrite");
+    const objectStore = transaction.objectStore(this.tableName);
     const request = objectStore.delete(id);
 
     request.onsuccess = (event) => {
@@ -157,8 +157,8 @@ class DB {
 
   toggleNote(id) {
     console.log("Entra a toggle");
-    const transaction = this.db.transaction([tableName], "readwrite");
-    const objectStore = transaction.objectStore(tableName);
+    const transaction = this.db.transaction([this.tableName], "readwrite");
+    const objectStore = transaction.objectStore(this.tableName);
     const getRequest = objectStore.get(id); // Obtener la nota por su ID
 
     getRequest.onsuccess = (event) => {
