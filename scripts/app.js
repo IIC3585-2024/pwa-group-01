@@ -79,7 +79,6 @@ navigator.serviceWorker.onmessage = (event) => {
     if(event.data.messageType === 'push-received'){
       let notificationData = {title: event.data.notification.title, body: event.data.notification.body}
       console.log(notificationData)
-      alert('nuevo mensaje')
       console.log(Notification.permission)
       notifyMe(notificationData)
     }
