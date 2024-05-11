@@ -1,9 +1,15 @@
+//import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+//import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js";
+
 class DB {
-  constructor(dbName, tableName) {
+  constructor(dbName, tableName, firebase) {
     this.db;
     this.tableName = tableName;
+    this.updateTableName = 'update'+ tableName
     this._dbPromise = this._init_db(dbName);
     this.view = null;
+    this.firebase = firebase
+    this.firebase.setDB(this)
 
     if (!localStorage.getItem("currentId")) {
       localStorage.setItem("currentId", 1);
@@ -33,6 +39,10 @@ class DB {
           keyPath: "id",
           autoIncrement: true,
         });
+        this.db.createObjectStore(this.updateTableName, {
+          keyPath: "id",
+          autoIncrement: true,
+        });
 
         console.log("Database created");
       });
@@ -48,7 +58,19 @@ class DB {
     localStorage.setItem("currentId", prev + 1);
   }
 
-  addNote(note, drawInTable) {
+  addNote(note, drawInTable, fromFirebase = false) {
+    if(!fromFirebase){
+      this.toUpdate({ id: note.id, note: note, action: '1_created' });
+      // Trys to save the note on the cloud
+      this.firebase.addNote(note)
+        .then((added) => {
+          // If created delete action from update db
+          if(added){
+            this.deleteUpdateById(note.id)
+          }
+        });
+    }
+
     console.log("Nota a guardar: ", note);
     const transaction = this.db.transaction([tableName], "readwrite");
     const objectStore = transaction.objectStore(tableName);
@@ -101,7 +123,19 @@ class DB {
     };
   }
 
-  deleteNoteById(id, callback) {
+  deleteNoteById(id, callback, fromFirebase = false) {
+    if(!fromFirebase){
+      this.toUpdate({ id: id, action: '3_deleted', noteId: id });
+      // Delete the note on firebase
+      this.firebase.deleteNote(id)
+        .then((added) => {
+          // If created delete action from update db
+          if(added){
+            this.deleteUpdateById(id)
+          }
+        });
+    }
+
     const transaction = this.db.transaction([tableName], "readwrite");
     const objectStore = transaction.objectStore(tableName);
     const request = objectStore.delete(id);
@@ -269,9 +303,132 @@ class DB {
       callback(null); // Si hay un error, llama al callback con null
     };
   }
-}
 
-const dbName = "mydb";
-const tableName = "notes";
+  // Function to store update data, it should delete itself when commited to firebase
+  toUpdate(note){
+    note.id = note.id+note.action
+    const transaction = this.db.transaction([this.updateTableName], "readwrite");
+    const objectStore = transaction.objectStore(this.updateTableName);
+    const request = objectStore.add(note);
+    request.onsuccess = (event) => {
+      console.log("Note added to update database");
+    };
+
+    request.onerror = (event) => {
+      console.error("Error adding note to update database:", event.target.error);
+    };
+  }
+  
+  // Checks if 2 notes are the same
+  equalNotes(obj1, obj2) {
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+  
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+  
+    for (let key of keys1) {
+      if (obj1[key] !== obj2[key]) {
+        return false;
+      }
+    }
+  
+    return true;
+  }
+
+  // SyncDBToFirebase
+  async syncToFirebase(){
+    await this.uploadToFirebase()
+    await this.downloadFromFirebase()
+  }
+
+  // Upload updates created while offline to Firebase
+  async uploadToFirebase(){
+    await new Promise((resolve, reject) => {
+      this._dbPromise.then(() => {
+        const transaction = this.db.transaction([this.updateTableName], "readonly");
+        const objectStore = transaction.objectStore(this.updateTableName);
+        const request = objectStore.getAll();
+  
+        request.onsuccess = (event) => {
+          const updates = event.target.result;
+          updates.forEach((update) => {
+
+            switch (update.action) {
+              case '1_created':
+                this.firebase.addNote(update.note)
+                  .then((added) => {
+                    if(added){
+                      this.deleteUpdateById(update.id)
+                    }
+                  });
+                break;
+              case '3_deleted':
+                this.firebase.deleteNote(update.noteId)
+                  .then((added) => {
+                    if(added){
+                      this.deleteUpdateById(update.id)
+                    }
+                  });
+            }
+          });
+          resolve();
+        };
+  
+        request.onerror = function (event) {
+          console.error("Error getting notes from update database:", event.target.error);
+          reject(event.target.error);
+        };
+      });
+    });
+  }
+
+  // Download updates occured while offline from Firebase
+  async downloadFromFirebase(){
+    // Get all firebase notes
+    let firebaseNotes = await this.firebase.getAllNotes()
+    // Get al local db notes
+    this._dbPromise.then(() => {
+      const transaction = this.db.transaction([this.tableName], "readonly");
+      const objectStore = transaction.objectStore(this.tableName);
+      const request = objectStore.getAll();
+
+      request.onsuccess = (event) => {
+        // local db notes
+        const notes = event.target.result;
+        let ids = []
+        notes.forEach((note) => {ids.push(note.id)})
+        let fbIds = []
+        // Check every note on firebase to see if there are new ones
+        firebaseNotes.forEach((note) => {
+          fbIds.push(note.id)
+          // if the note already exists
+          if(ids.includes(note.id)) {
+            let localNote = notes.find( n => n.id === note.id)
+            if(!this.equalNotes(localNote,note)){
+              console.log('update note', note.id)
+            }
+          }else{
+            this.addNote(note, (note) => {
+              this.view.createTableRow(note);
+            }, true)
+          }
+        })
+        // Check every note on local to see if any was deleted online
+        ids.forEach((id) => {
+          if(!fbIds.includes(id)){
+            this.deleteNoteById(id, null, true)
+            document.getElementById(id).remove();
+          }
+        })
+      };
+
+      request.onerror = function (event) {
+        console.error("Error getting notes from database:", event.target.error);
+      };
+    });
+  }
+}
 
 export default DB;
