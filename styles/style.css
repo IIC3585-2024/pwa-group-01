@@ -6,7 +6,11 @@ body {
 }
 
 main {
-  width: 100vw;
+  width: 100%;
+}
+
+h1 {
+  font-weight: 600;
 }
 
 .container-input {
@@ -14,6 +18,51 @@ main {
   margin-left: auto;
   margin-right: auto;
   padding: 15px;
+  display: flex;
+  place-content: center;
+}
+
+.container-button-add button {
+  margin-top: 24px;
+}
+
+.modal-header {
+  background-color: #444cf7;
+  color: #e5e5f7;
+  display: flex;
+  justify-content: space-between;
+}
+
+.completed-modal {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.completed-modal input {
+  margin-top: 8px;
+}
+
+.btn-save {
+  background-color: #444cf7;
+  color: #e5e5f7;
+}
+
+.btn-save:hover {
+  scale: 1.05;
+  background-color: #444cf7;
+  color: #e5e5f7;
+}
+
+.input-words {
+  background-color: #fff;
+  padding: 5px;
+  border-radius: 8px;
+  border: 0.5px solid rgb(171, 171, 171);
+}
+
+.d-all-btn {
+  margin-left: 10px;
 }
 
 .input-form {
@@ -48,7 +97,6 @@ td {
   text-align: center;
 }
 
-/* Especifica el ancho de cada columna */
 th:nth-child(1),
 td:nth-child(1) {
   width: 30px;
@@ -75,14 +123,16 @@ td:nth-child(4) {
   border: none;
   border-radius: 2px;
   padding: 2px 6px;
+  margin-right: 2px;
+  margin-left: 2px;
 }
 
 .delete-button {
   background-color: red;
   color: #ddd;
   border: none;
-  border-radius: 2px;
-  padding: 2px 6px;
+  margin-right: 2px;
+  margin-left: 2px;
 }
 
 .edit-button :hover,
@@ -96,29 +146,24 @@ header {
   z-index: 10;
 }
 
-h1 {
-  opacity: 1;
-  z-index: 10;
-}
-
 .bg {
   background-color: #e5e5f7;
   opacity: 0.1;
-  background-size: 5px 5px;
-  background-image: repeating-linear-gradient(
-    45deg,
-    #444cf7 0,
-    #444cf7 0.5px,
-    #e5e5f7 0,
-    #e5e5f7 50%
-  );
-  z-index: -1;
+  background-image: linear-gradient(
+      #444cf7 0.7000000000000001px,
+      transparent 0.7000000000000001px
+    ),
+    linear-gradient(
+      to right,
+      #444cf7 0.7000000000000001px,
+      #e5e5f7 0.7000000000000001px
+    );
+  background-size: 14px 14px;
+  z-index: -10;
 
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
 }
 
 input {
@@ -138,12 +183,35 @@ input {
   transition-duration: 0.3s linear ease;
 }
 
-.notes-container {
-  max-height: 600px;
-  overflow: auto;
-}
-
 .generic-button:hover {
   scale: 1.05;
   cursor: pointer;
+}
+
+.notes-container {
+  max-height: 800px;
+  overflow: auto;
+  margin-bottom: 20px;
+}
+
+.blue {
+  background-color: #3f84e5;
+  color: #ddd;
+}
+
+.yellow {
+  background-color: #f6e27f;
+}
+
+.green {
+  background-color: #9cec5b;
+}
+
+.violet {
+  background-color: #533a71;
+  color: #ddd;
+}
+
+.orange {
+  background-color: #f05d23;
 }

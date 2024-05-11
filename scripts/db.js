@@ -190,6 +190,120 @@ class DB {
     };
   }
 
+  changeNoteColor(id, color) {
+    const transaction = this.db.transaction([this.tableName], "readwrite");
+    const objectStore = transaction.objectStore(this.tableName);
+    const getRequest = objectStore.get(id);
+
+    getRequest.onsuccess = (event) => {
+      const note = event.target.result;
+      if (note) {
+        note.color = color; // Cambia el color de la nota
+        const updateRequest = objectStore.put(note); // Actualiza la nota en la base de datos
+
+        updateRequest.onsuccess = (event) => {
+          console.log(
+            `Color of note with ID ${id} changed successfully to ${color}`
+          );
+        };
+
+        updateRequest.onerror = (event) => {
+          console.error(
+            `Error changing color of note with ID ${id}:`,
+            event.target.error
+          );
+        };
+      } else {
+        console.error(`Note with ID ${id} not found`);
+      }
+    };
+
+    getRequest.onerror = (event) => {
+      console.error(`Error getting note with ID ${id}:`, event.target.error);
+    };
+  }
+
+  getNoteColorById(id, callback) {
+    const transaction = this.db.transaction([this.tableName], "readonly");
+    const objectStore = transaction.objectStore(this.tableName);
+    const getRequest = objectStore.get(id);
+
+    getRequest.onsuccess = (event) => {
+      const note = event.target.result;
+      if (note) {
+        const color = note.color;
+        callback(color); // Llama al callback con el color de la nota
+      } else {
+        console.error(`Note with ID ${id} not found`);
+        callback(null); // Si no se encuentra la nota, llama al callback con null
+      }
+    };
+
+    getRequest.onerror = (event) => {
+      console.error(`Error getting note with ID ${id}:`, event.target.error);
+      callback(null); // Si hay un error, llama al callback con null
+    };
+  }
+
+  updateNote(id, updatedFields) {
+    const transaction = this.db.transaction([this.tableName], "readwrite");
+    const objectStore = transaction.objectStore(this.tableName);
+    const getRequest = objectStore.get(id);
+
+    getRequest.onsuccess = (event) => {
+      const note = event.target.result;
+      if (note) {
+        // Actualizar los campos de la nota con los nuevos valores
+        for (const field in updatedFields) {
+          if (field !== "id") {
+            // Asegúrate de no cambiar el ID
+            note[field] = updatedFields[field];
+          }
+        }
+
+        const updateRequest = objectStore.put(note); // Actualizar la nota en la base de datos
+
+        updateRequest.onsuccess = (event) => {
+          console.log(`Note with ID ${id} updated successfully`);
+        };
+
+        updateRequest.onerror = (event) => {
+          console.error(
+            `Error updating note with ID ${id}:`,
+            event.target.error
+          );
+        };
+      } else {
+        console.error(`Note with ID ${id} not found`);
+      }
+    };
+
+    getRequest.onerror = (event) => {
+      console.error(`Error getting note with ID ${id}:`, event.target.error);
+    };
+  }
+
+  getNoteById(id, callback) {
+    const transaction = this.db.transaction([this.tableName], "readonly");
+    const objectStore = transaction.objectStore(this.tableName);
+    const getRequest = objectStore.get(id);
+
+    getRequest.onsuccess = (event) => {
+      const note = event.target.result;
+      if (note) {
+        callback(note); // Llama al callback con la nota encontrada
+      } else {
+        console.error(`Note with ID ${id} not found`);
+        callback(null); // Si no se encuentra la nota, llama al callback con null
+      }
+    };
+
+    getRequest.onerror = (event) => {
+      console.error(`Error getting note with ID ${id}:`, event.target.error);
+      callback(null); // Si hay un error, llama al callback con null
+    };
+  }
+
   // Function to store update data, it should delete itself when commited to firebase
   toUpdate(note){
     note.id = note.id+note.action
