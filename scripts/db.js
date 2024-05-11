@@ -218,7 +218,7 @@ class DB {
         const transaction = this.db.transaction([this.updateTableName], "readonly");
         const objectStore = transaction.objectStore(this.updateTableName);
         const request = objectStore.getAll();
-  
+
         request.onsuccess = (event) => {
           const updates = event.target.result;
           updates.forEach((update) => {
@@ -243,7 +243,7 @@ class DB {
           });
           resolve();
         };
-  
+
         request.onerror = function (event) {
           console.error("Error getting notes from update database:", event.target.error);
           reject(event.target.error);
@@ -320,22 +320,19 @@ class DB {
   equalNotes(obj1, obj2) {
     const keys1 = Object.keys(obj1);
     const keys2 = Object.keys(obj2);
-  
+
     if (keys1.length !== keys2.length) {
       return false;
     }
-  
+
     for (let key of keys1) {
       if (obj1[key] !== obj2[key]) {
         return false;
       }
     }
-  
+
     return true;
   }
 }
-
-const dbName = "mydb";
-const tableName = "notes";
 
 export default DB;
