@@ -56,13 +56,6 @@ class Firebase {
       this.database = this.firebaseDatabase.getDatabase();
       // Reference to the location where you want to add the elements
       this.firebaseRef = this.firebaseDatabase.ref(this.database, 'notes');
-      // Load Firebase Messaging asynchronously
-      this.firebaseMessaging = await this._loadFirebaseMessaging();
-      // Get a reference to the messaging service
-      this.messaging = this.firebaseMessaging.getMessaging(this.app)
-      // Get a reference to onMessage
-      this.onMessage = this.firebaseMessaging.onMessage
-
     } catch (error) {
       console.error("Error initializing Firebase:", error);
     }
