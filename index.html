@@ -107,24 +107,24 @@
 
     <main>
       <div class="container-input">
-        <form>
+        <form class="form-create-note">
           <div class="input-form">
-            <div>
+            <div class="w-100">
               <label>Title</label>
               <input
                 type="text"
                 id="title"
-                class="form-control ml-sm-2"
-                placeholder="Learn JS"
+                class="form-control ml-sm-2 w-100"
+                placeholder="Note title"
               />
             </div>
-            <div>
+            <div class="w-100">
               <label>Description</label>
               <input
                 type="text"
                 id="description"
-                class="form-control ml-sm-2"
-                placeholder="Watch JS Tutorials"
+                class="form-control ml-sm-2 w-100"
+                placeholder="Note description"
               />
             </div>
             <div class="container-button-add">
@@ -134,16 +134,23 @@
         </form>
       </div>
 
-      <div class="container-input">
+      <div class="container-filters">
         <div class="">
-          <form class="" id="filters">
-            <label class="">Filters</label>
-            <input type="radio" name="type" value="all" class="mx-1" />
-            <label for="male" class="">All</label>
-            <input type="radio" name="type" value="completed" class="mx-1" />
-            <label for="female" class="">Completed</label>
-            <input type="radio" name="type" value="uncompleted" class="mx-1" />
-            <label for="other" class="">Uncompleted</label>
+          <form class="form-filters" id="filters">
+            <div class="selection-filters">
+              <label class="">Filters</label>
+              <input type="radio" name="type" value="all" class="mx-1" />
+              <label for="male" class="">All</label>
+              <input type="radio" name="type" value="completed" class="mx-1" />
+              <label for="female" class="">Completed</label>
+              <input
+                type="radio"
+                name="type"
+                value="uncompleted"
+                class="mx-1"
+              />
+              <label for="other" class="">Uncompleted</label>
+            </div>
 
             <input
               class="input-words"
@@ -157,9 +164,7 @@
             </button>
           </form>
         </div>
-        <button class="generic-button d-all-btn" id="delete-all-button">
-          Delete All
-        </button>
+        <button class="d-all-btn" id="delete-all-button">Delete All</button>
       </div>
 
       <div class="table-container">
