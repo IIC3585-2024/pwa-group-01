@@ -22,7 +22,6 @@ class Firebase {
     this._initializeFirebase()
       .then(() => {
         this.setupConnectionListener();
-        this.setupMessaging();
       });
   }
 
@@ -42,13 +41,6 @@ class Firebase {
       } else {
         console.log("Firebase: Disconnected");
       }
-    });
-  }
-
-
-  setupMessaging() {
-    this.onMessage((payload) => {
-      console.log('Message from firebase:', payload);
     });
   }
 
