@@ -72,39 +72,3 @@ function setup() {
 }
 
 setTimeout(setup, 10000);
-
-navigator.serviceWorker.onmessage = (event) => {
-  console.log(event.data)
-  try{
-    if(event.data.messageType === 'push-received'){
-      let notificationData = {title: event.data.notification.title, body: event.data.notification.body}
-      console.log(notificationData)
-      console.log(Notification.permission)
-      notifyMe(notificationData)
-    }
-  }
-  catch (err){
-    console.error('Service Worker message reception failed: ', err)
-  }
-};
-
-function notifyMe(message) {
-  if (!("Notification" in window)) {
-    // Check if the browser supports notifications
-    alert("This browser does not support desktop notification");
-  } else if (Notification.permission === "granted") {
-    // Check whether notification permissions have already been granted;
-    // if so, create a notification
-    const notification = new Notification("Hi there!");
-    // …
-  } else if (Notification.permission !== "denied") {
-    // We need to ask the user for permission
-    Notification.requestPermission().then((permission) => {
-      // If the user accepts, let's create a notification
-      if (permission === "granted") {
-        const notification = new Notification("Hi there!");
-        // …
-      }
-    });
-  }
-}
