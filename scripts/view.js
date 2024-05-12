@@ -34,7 +34,8 @@ export default class View {
   }
 
   getCurrentId() {
-    return parseInt(localStorage.getItem("currentId"));
+    let newId = new Date().getTime();
+    return `${newId}`;
   }
 
   render() {
