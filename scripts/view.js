@@ -75,7 +75,7 @@ export default class View {
     row.classList.add(note.color);
     row.innerHTML = `
       <td>${note.title}</td>
-      <td>${note.description}</td>
+      <td class="description">${note.description}</td>
       <td class="check-container">
       </td>
       <td>

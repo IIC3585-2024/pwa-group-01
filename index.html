@@ -139,17 +139,15 @@
           <form class="form-filters" id="filters">
             <div class="selection-filters">
               <label class="">Filters</label>
-              <input type="radio" name="type" value="all" class="mx-1" />
-              <label for="male" class="">All</label>
-              <input type="radio" name="type" value="completed" class="mx-1" />
-              <label for="female" class="">Completed</label>
-              <input
-                type="radio"
-                name="type"
-                value="uncompleted"
-                class="mx-1"
-              />
-              <label for="other" class="">Uncompleted</label>
+              <label>
+                <input type="radio" name="type" value="all" class="mx-1" /> All
+              </label>
+              <label>
+                <input type="radio" name="type" value="completed" class="mx-1" /> Completed
+              </label>
+              <label>
+                <input type="radio" name="type" value="uncompleted" class="mx-1" /> Uncompleted
+              </label>
             </div>
 
             <input
@@ -172,7 +170,7 @@
           <thead>
             <tr>
               <th scope="col">Note</th>
-              <th scope="col">Description</th>
+              <th scope="col" class="description">Description</th>
               <th class="check-container" scope="col">
                 <div>Completed</div>
               </th>
