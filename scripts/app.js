@@ -51,9 +51,6 @@ async function setupFirebase(){
     if (currentToken) {
       console.log(currentToken)
       firebaseModel.addToken(currentToken)
-      messaging.onMessage((payload) => {
-        console.log('Notificación push recibida en primer plano:', payload);
-      });
     } else {
       console.log('No registration token available. Request permission to generate one.');
     }
