@@ -165,9 +165,8 @@ td {
   border-bottom: 1px solid #ddd;
 }
 
-th.description,
-td.description {
-  min-width: 100%;
+.description {
+  min-width: 125px;
   word-break: break-all;
 }
 
